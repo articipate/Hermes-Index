@@ -1,0 +1,85 @@
+{
+  "skill_name": "hermes-index",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "This is a fresh project with no index. Initialize Hermes-Index, then create a folder `src` and a file `src/app.py`. Record the file work with the action 'Write the entry point'. Show me the final IDs.",
+      "expected_output": "h_index.md is initialized and maintained through the helper. src is /A, src/app.py is /A/1, and the map contains the short action. Real files and folders keep their names.",
+      "files": [],
+      "expectations": [
+        "The agent runs the Hermes-Index init command rather than creating h_index.md by hand.",
+        "h_index.md exists at the project root with codes: and map: sections.",
+        "src is indexed as /A and src/app.py as /A/1.",
+        "The map contains a folder creation entry for /A and an entry for /A/1 with the action 'Write the entry point'.",
+        "Real folders and files keep their names; no IDs are used in filesystem names.",
+        "If the project is a Git repository, h_index.md is excluded through .git/info/exclude rather than .gitignore."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The project already has h_index.md with /A = src/ and /A/1 = src/main.py. Add a new module src/auth.py, then refactor src/main.py to call it. Keep the existing IDs stable.",
+      "expected_output": "The agent maintains the existing index without reinitializing it. The new module receives a new ID under /A, the existing /A/1 still points to src/main.py, and both changes are logged.",
+      "files": [],
+      "expectations": [
+        "The agent reads the existing index instead of reinitializing or overwriting it.",
+        "src/auth.py appears in codes: with a new ID under /A.",
+        "/A/1 is still mapped to src/main.py after the refactor.",
+        "The map contains short base-form actions for the new module and the refactor, with no paths or parentheses.",
+        "The helper verify command passes after the changes."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Refactor the parser in this repository.",
+      "expected_output": "The project has no h_index.md. The agent checks for one, offers initialization once, explains that it is hidden and Git-excluded, and does not create it before consent.",
+      "files": [],
+      "expectations": [
+        "The agent checks for h_index.md before editing files.",
+        "The agent offers initialization exactly once and waits for a decision.",
+        "No h_index.md is created before the user consents.",
+        "The offer mentions that the index is hidden/local and excluded from Git.",
+        "The agent does not silently create an index in the project root or a subfolder."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "In the indexed project, rename src/auth/login.py to src/auth/session.py and update all references. Use the existing index.",
+      "expected_output": "The agent uses the helper move command. The file keeps its original ID, codes: shows the new path, map: records the move, and verify passes.",
+      "files": [],
+      "expectations": [
+        "The agent uses the Hermes-Index move command instead of only renaming the file.",
+        "The file ID in codes: is unchanged after the rename.",
+        "The old path no longer appears in codes:.",
+        "The new path appears in codes: with the same ID.",
+        "The map records a move entry with a short base-form action.",
+        "The helper verify command passes."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "In the indexed project, delete src/old.py and add src/new.py in the same folder. Do not reuse the deleted file's number.",
+      "expected_output": "The deleted ID leaves codes: but remains in map: and state. src/new.py receives a fresh number, never the retired one. The index verifies.",
+      "files": [],
+      "expectations": [
+        "src/old.py no longer appears in codes:.",
+        "The deleted ID and its history remain in map:.",
+        "src/new.py appears in codes: with a new ID that is not the deleted file's ID.",
+        "The new file number is not a reuse of the deleted number.",
+        "The helper verify command passes."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "In the indexed project, create 27 sibling folders under docs and tell me the 27th folder's ID. Keep the real folder names unchanged.",
+      "expected_output": "The first 26 folders receive /A/A through /A/Z under the docs folder. The 27th receives a deterministic 2+ letter segment under /A and remains unique. No real folder name contains an ID.",
+      "files": [],
+      "expectations": [
+        "The first 26 child folders receive single-letter IDs A through Z under docs.",
+        "The 27th child folder receives an ID segment of two or more letters.",
+        "All 27 folder IDs are unique and follow the Hermes-Index grammar.",
+        "Real folder names are not changed to include IDs.",
+        "The helper verify command passes."
+      ]
+    }
+  ]
+}
