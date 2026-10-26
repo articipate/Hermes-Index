@@ -158,6 +158,11 @@ class FormatTests(HermesIndexTestCase):
         self.assert_fails(self.cli("folder", "src", "--segment", "A1"), "letters")
         self.assertFalse((self.root / "src").exists())
 
+    @unittest.skipUnless(os.name == "nt", "Windows paths are case-insensitive")
+    def test_windows_paths_match_case_insensitively(self) -> None:
+        self.assertTrue(h_index._folders_match("Src/App.py", "src/app.py"))
+        self.assertTrue(h_index._folders_match("src\\App.py", "src/app.py"))
+
 
 class AllocationTests(HermesIndexTestCase):
     def test_root_and_per_folder_file_counters(self) -> None:

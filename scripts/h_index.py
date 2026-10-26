@@ -152,7 +152,9 @@ def _git(root: Path, *args: str) -> Optional[subprocess.CompletedProcess]:
 
 
 def _folders_match(path_a: str, path_b: str) -> bool:
-    return path_a.rstrip("/") == path_b.rstrip("/")
+    return os.path.normcase(path_a.rstrip("/")) == os.path.normcase(
+        path_b.rstrip("/")
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1226,7 +1228,7 @@ def verify_project(root: Path, index_path: Path, state: Dict[str, Any], text: st
             errors.append(f"active folder path is missing: {path} ({folder_id})")
         elif not abs_path.is_dir():
             errors.append(f"active folder path is not a directory: {path} ({folder_id})")
-        key = path.rstrip("/")
+        key = os.path.normcase(path.rstrip("/"))
         if key in seen_paths:
             errors.append(
                 f"duplicate active path: {path} ({seen_paths[key]} and {folder_id})"
@@ -1240,11 +1242,12 @@ def verify_project(root: Path, index_path: Path, state: Dict[str, Any], text: st
             errors.append(f"active file path is missing: {path} ({file_id})")
         elif not abs_path.is_file():
             errors.append(f"active file path is not a file: {path} ({file_id})")
-        if path in seen_paths:
+        key = os.path.normcase(path.rstrip("/"))
+        if key in seen_paths:
             errors.append(
-                f"duplicate active path: {path} ({seen_paths[path]} and {file_id})"
+                f"duplicate active path: {path} ({seen_paths[key]} and {file_id})"
             )
-        seen_paths[path] = file_id
+        seen_paths[key] = file_id
 
     for folder_id, folder in active_folders:
         path = folder.get("path", "")
@@ -1261,7 +1264,7 @@ def verify_project(root: Path, index_path: Path, state: Dict[str, Any], text: st
                 errors.append(
                     f"folder {folder_id} references missing active parent {parent_id}"
                 )
-            elif parent_path != parent.get("path", "").rstrip("/"):
+            elif not _folders_match(parent_path, parent.get("path", "")):
                 errors.append(
                     f"folder {folder_id} path {path} does not match parent {parent_id}"
                 )
@@ -1281,7 +1284,7 @@ def verify_project(root: Path, index_path: Path, state: Dict[str, Any], text: st
                 errors.append(
                     f"file {file_id} references missing active folder {folder_id}"
                 )
-            elif parent_path != folder.get("path", "").rstrip("/"):
+            elif not _folders_match(parent_path, folder.get("path", "")):
                 errors.append(
                     f"file {file_id} path {path} does not match folder {folder_id}"
                 )

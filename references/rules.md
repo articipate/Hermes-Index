@@ -269,8 +269,8 @@ Filesystem behavior:
 - If both exist, neither exists, the destination is already indexed, or a folder
   would move inside itself, the command fails.
 
-Map history is never rewritten. A move adds one `Move file` or `Move folder`
-entry; previous entries keep their historical paths.
+Map history is never rewritten. A move adds one map entry, `Move file` or
+`Move folder` by default; previous entries keep their historical paths.
 
 ### 5.4 Delete
 
@@ -699,7 +699,7 @@ still excluded from Git. Do not add it to `.gitignore` just to reduce visibility
 - **State comment escaping.** `>` is escaped in JSON so no user string can
   terminate the HTML comment early.
 - **Index file name is reserved.** The helper refuses to index `h_index.md`, the
-  lock, temporary files, and VCS metadata.
+  lock, and VCS metadata.
 
 ## 12. Testing
 
